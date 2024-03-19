@@ -2,3 +2,12 @@ name: CondensePlugin
 version: '${project.version}'
 main: me.kermx.condenseplugin.CondensePlugin
 api-version: '1.20'
+commands:
+  condense:
+    usage: /condense <item/all>
+    permission: condenseplugin.use
+    description: Condense items into their block form
+    aliases:
+      - cond
+      - smush
+      - c

@@ -6,8 +6,8 @@ public final class CondensePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-
+        getCommand("condense").setExecutor(new CondenseCommand());
+        getCommand("condense").setTabCompleter(new CondenseCommand());
     }
 
     @Override

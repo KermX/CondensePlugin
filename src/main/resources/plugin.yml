@@ -1,0 +1,4 @@
+name: CondensePlugin
+version: '${project.version}'
+main: me.kermx.condenseplugin.CondensePlugin
+api-version: '1.20'

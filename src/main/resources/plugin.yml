@@ -11,3 +11,12 @@ commands:
       - cond
       - smush
       - c
+  uncondense:
+    usage: /uncondense <item/all>
+    permission: uncondenseplugin.use
+    description: Uncondense items into their item form, from block
+    aliases:
+      - uncond
+      - unsmush
+      - unc
+      - uc

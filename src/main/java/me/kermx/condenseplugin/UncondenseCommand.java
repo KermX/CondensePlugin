@@ -47,7 +47,7 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
         ItemStack inputItem = new ItemStack(inputMaterial);
         if (!hasTags(inputItem)) {
             int inputAmount = materialMapping.getRecipes().get(inputMaterial);
-            int inputCount = countItems(player.getInventory().getContents(), inputMaterial);
+            int inputCount = countItems(player.getInventory().getStorageContents(), inputMaterial);
 
             if (inputCount >= inputAmount) {
                 int condensedBlocks = inputCount / inputAmount;
@@ -104,20 +104,52 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
                 }
 
                 if (count >= 1) {
-                    int uncondensedItems = count * outputAmount;
+                    int totalUncondensedItems = count * outputAmount;
+                    int stacks = (int) Math.round((double) totalUncondensedItems / 64 - 0.5);
+                    int leftovers = totalUncondensedItems % 64;
+                    ArrayList<ItemStack> stacksToAddList = new ArrayList<>();
 
                     ItemStack inputStack = new ItemStack(material, count);
                     playerInventory.removeItem(inputStack);
 
-                    ItemStack resultStack = new ItemStack(resultMaterial, uncondensedItems);
-                    playerInventory.addItem(resultStack);
-                    // TODO handle full inventory drop on the ground
+                    for (int i = 0; i < stacks; i++) {
+                        stacksToAddList.add(new ItemStack(resultMaterial, 64));
+                    }
+                    if (leftovers > 0) {
+                        stacksToAddList.add(new ItemStack(resultMaterial, leftovers));
+                    }
+
+                    int emptySpaces = emptyInventorySpaces(playerInventory.getStorageContents());
+//                    Bukkit.getLogger().info("totalUncondensedItems: " + totalUncondensedItems);
+//                    Bukkit.getLogger().info("stacks: " + stacks);
+//                    Bukkit.getLogger().info("leftovers: " + leftovers);
+
+                    for (int i = 0; i < stacksToAddList.size(); i++) {
+                        if (i+1 < emptySpaces) {
+                            playerInventory.addItem(stacksToAddList.get(i));
+                            Bukkit.getLogger().info("add to inv: " + stacksToAddList.get(i).toString());
+                        } else {
+                            player.getWorld().dropItem(player.getLocation(), stacksToAddList.get(i));
+                            Bukkit.getLogger().info("drop to ground: " + stacksToAddList.get(i).toString());
+                        }
+                    }
+
                 }
             } else {
                 // Log or handle the case where the resultMaterial is not found in reversibleRecipes
                 Bukkit.getLogger().warning("Material " + material + " does not have a corresponding recipe.");
             }
         }
+    }
+
+    private int emptyInventorySpaces(ItemStack[] contents) {
+        int emptySpaces = 0;
+        for (ItemStack item : contents) {
+            if (item == null || item.getType() == Material.AIR) {
+                emptySpaces++;
+            }
+        }
+        return emptySpaces;
     }
 
     private boolean hasTags(ItemStack item) {

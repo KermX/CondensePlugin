@@ -12,6 +12,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+import static me.kermx.condenseplugin.MaterialMapping.getMainInventory;
+import static me.kermx.condenseplugin.MaterialMapping.giveItem;
+
 public class CondenseCommand implements CommandExecutor, TabCompleter {
 
     private MaterialMapping materialMapping;
@@ -62,8 +65,8 @@ public class CondenseCommand implements CommandExecutor, TabCompleter {
                         player.getInventory().removeItem(inputStack);
 
                         Material resultMaterial = materialMapping.getResultMaterial(inputMaterial, false);
-                        player.getInventory().addItem(new ItemStack(resultMaterial, condensedBlocks));
-                        player.getInventory().addItem(new ItemStack(inputMaterial, remainingItems));
+                        giveItem(player, new ItemStack(resultMaterial, condensedBlocks));
+                        giveItem(player, new ItemStack(inputMaterial, remainingItems));
                         // player.sendMessage("Condensed " + condensedBlocks + " " + resultMaterial + " blocks.");
                     } else {
                         player.sendMessage("You don't have enough to condense.");
@@ -75,7 +78,6 @@ public class CondenseCommand implements CommandExecutor, TabCompleter {
         }
         return true;
     }
-
 
     private int countItems(ItemStack[] items, Material material) {
         int count = 0;
@@ -91,7 +93,8 @@ public class CondenseCommand implements CommandExecutor, TabCompleter {
 
     private void condenseInventory(Player player) {
         PlayerInventory playerInventory = player.getInventory();
-        ItemStack[] contents = playerInventory.getContents();
+        ItemStack[] contents = getMainInventory(player);
+
 
         for (Material material : materialMapping.getRecipes().keySet()) {
             int inputAmount = materialMapping.getRecipes().get(material);
@@ -118,39 +121,39 @@ public class CondenseCommand implements CommandExecutor, TabCompleter {
                     Material emptyItemMaterial = materialMapping.getGiveBackEmptyMappings().get(material);
                     int emptyItemAmount = count - remainingItems;
                     ItemStack emptyItemStack = new ItemStack(emptyItemMaterial, emptyItemAmount);
-                    playerInventory.addItem(emptyItemStack);
+                    giveItem(player, emptyItemStack);
                 }
 
-                playerInventory.addItem(resultStack);
-                playerInventory.addItem(new ItemStack(material, remainingItems));
+                giveItem(player, resultStack);
+                giveItem(player, new ItemStack(material, remainingItems));
             }
         }
     }
 
     private void condenseReversibleItems(Player player) {
         PlayerInventory playerInventory = player.getInventory();
-        ItemStack[] contents = playerInventory.getContents();
+        ItemStack[] contents = getMainInventory(player);
 
         for (Material material : materialMapping.getReversibleRecipes().keySet()) {
-            int inputAmount = materialMapping.getReversibleRecipes().get(material);
-            int count = 0;
+            int requiredAmount = materialMapping.getReversibleRecipes().get(material);
+            int amountInInventory = 0;
 
             for (ItemStack item : contents) {
                 if (item != null && item.getType() == material && !hasTags(item)) {
-                    count += item.getAmount();
+                    amountInInventory += item.getAmount();
                 }
             }
 
-            if (count >= inputAmount) {
-                int condensedBlocks = count / inputAmount;
-                int remainingItems = count % inputAmount;
+            if (amountInInventory >= requiredAmount) {
+                int condensedBlocks = amountInInventory / requiredAmount;
+                int remainingItems = amountInInventory % requiredAmount;
 
-                ItemStack inputStack = new ItemStack(material, count);
+                ItemStack inputStack = new ItemStack(material, amountInInventory);
                 playerInventory.removeItem(inputStack);
 
                 Material resultMaterial = materialMapping.getResultMaterial(material, false);
-                playerInventory.addItem(new ItemStack(resultMaterial, condensedBlocks));
-                playerInventory.addItem(new ItemStack(material, remainingItems));
+                giveItem(player, new ItemStack(resultMaterial, condensedBlocks));
+                giveItem(player, new ItemStack(material, remainingItems));
             }
         }
     }

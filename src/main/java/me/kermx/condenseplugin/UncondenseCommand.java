@@ -13,6 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
+import static me.kermx.condenseplugin.MaterialMapping.getMainInventory;
+import static me.kermx.condenseplugin.MaterialMapping.giveItem;
+
 public class UncondenseCommand implements CommandExecutor, TabCompleter {
 
     private MaterialMapping materialMapping;
@@ -46,7 +49,9 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
         // Check for special NBT tags on the input item
         ItemStack inputItem = new ItemStack(inputMaterial);
         if (!hasTags(inputItem)) {
+            // amount (i.e 9) to get condensed
             int inputAmount = materialMapping.getRecipes().get(inputMaterial);
+            // amount in player's inventory total
             int inputCount = countItems(player.getInventory().getStorageContents(), inputMaterial);
 
             if (inputCount >= inputAmount) {
@@ -57,8 +62,8 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
                 player.getInventory().removeItem(inputStack);
 
                 Material resultMaterial = materialMapping.getResultMaterial(inputMaterial, false);
-                player.getInventory().addItem(new ItemStack(resultMaterial, condensedBlocks));
-                player.getInventory().addItem(new ItemStack(inputMaterial, remainingItems));
+                giveItem(player, new ItemStack(resultMaterial, condensedBlocks));
+                giveItem(player, new ItemStack(inputMaterial, remainingItems));
                 // player.sendMessage("Condensed " + condensedBlocks + " " + resultMaterial + " blocks.");
             } else {
                 player.sendMessage("You don't have enough to condense.");
@@ -68,7 +73,6 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
         }
         return true;
     }
-
 
     private int countItems(ItemStack[] items, Material material) {
         int count = 0;
@@ -84,7 +88,7 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
 
     private void uncondenseInventory(Player player) {
         PlayerInventory playerInventory = player.getInventory();
-        ItemStack[] contents = playerInventory.getContents();
+        ItemStack[] contents = getMainInventory(player);
 
         Map<Material, Material> reversibleMaterialMappings = materialMapping.getReversibleMaterialMappings(true);
         Map<Material, Integer> reversibleRecipes = materialMapping.getReversibleRecipes();
@@ -119,19 +123,9 @@ public class UncondenseCommand implements CommandExecutor, TabCompleter {
                         stacksToAddList.add(new ItemStack(resultMaterial, leftovers));
                     }
 
-                    int emptySpaces = emptyInventorySpaces(playerInventory.getStorageContents());
-//                    Bukkit.getLogger().info("totalUncondensedItems: " + totalUncondensedItems);
-//                    Bukkit.getLogger().info("stacks: " + stacks);
-//                    Bukkit.getLogger().info("leftovers: " + leftovers);
-
                     for (int i = 0; i < stacksToAddList.size(); i++) {
-                        if (i+1 < emptySpaces) {
-                            playerInventory.addItem(stacksToAddList.get(i));
-                            Bukkit.getLogger().info("add to inv: " + stacksToAddList.get(i).toString());
-                        } else {
-                            player.getWorld().dropItem(player.getLocation(), stacksToAddList.get(i));
-                            Bukkit.getLogger().info("drop to ground: " + stacksToAddList.get(i).toString());
-                        }
+                        giveItem(player, stacksToAddList.get(i));
+                        Bukkit.getLogger().info("add to inv: " + stacksToAddList.get(i).toString());
                     }
 
                 }

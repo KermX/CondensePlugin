@@ -1,6 +1,11 @@
 package me.kermx.condenseplugin;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -149,4 +154,40 @@ public class MaterialMapping {
         }
         return inversedMap;
     }
+
+    public static ItemStack[] getMainInventory(Player player) {
+        PlayerInventory inventory = player.getInventory();
+
+        // The main inventory is from slot 0 to 35 (inclusive)
+        ItemStack[] mainInventory = new ItemStack[36];
+        for (int i = 0; i < 36; i++) {
+            mainInventory[i] = inventory.getItem(i);
+        }
+
+        return mainInventory;
+    }
+
+    /**
+     * Tries to give an item to a player. If the player's inventory is full,
+     * the remaining items are dropped on the ground at the player's location.
+     *
+     * @param player The player to give the item to.
+     * @param itemStack The item stack to give to the player.
+     */
+    public static void giveItem(Player player, ItemStack itemStack) {
+        // Try to add the item to the player's inventory
+        HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(itemStack);
+
+        // If there are remaining items, drop them on the ground
+        if (!remainingItems.isEmpty()) {
+            Location location = player.getLocation();
+            for (ItemStack remainingItem : remainingItems.values()) {
+                if (remainingItem != null) {
+                    Item droppedItem = player.getWorld().dropItem(location, remainingItem);
+                    droppedItem.setPickupDelay(0); // Optional: allow the player to pick up the item immediately
+                }
+            }
+        }
+    }
+
 }

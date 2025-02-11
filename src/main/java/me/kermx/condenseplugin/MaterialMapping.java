@@ -27,7 +27,6 @@ public class MaterialMapping {
         irreversibleRecipes.put(Material.HONEY_BOTTLE, 4);
         irreversibleRecipes.put(Material.HONEYCOMB, 4);
         irreversibleRecipes.put(Material.PRISMARINE_SHARD, 4);
-        irreversibleRecipes.put(Material.CLAY_BALL, 4);
         irreversibleRecipes.put(Material.BRICK, 4);
         irreversibleRecipes.put(Material.NETHER_BRICK, 4);
         irreversibleRecipes.put(Material.NETHER_WART, 9);
@@ -39,6 +38,7 @@ public class MaterialMapping {
         irreversibleRecipes.put(Material.ICE, 9);
         irreversibleRecipes.put(Material.POPPED_CHORUS_FRUIT, 4);
         irreversibleRecipes.put(Material.CHARCOAL, 9);
+        irreversibleRecipes.put(Material.MAGMA_CREAM, 4);
 
         reversibleRecipes.put(Material.BONE_MEAL, 9);
         reversibleRecipes.put(Material.WHEAT, 9);
@@ -59,6 +59,7 @@ public class MaterialMapping {
         reversibleRecipes.put(Material.REDSTONE, 9);
         reversibleRecipes.put(Material.MELON_SLICE, 9);
         reversibleRecipes.put(Material.DRIED_KELP, 9);
+        reversibleRecipes.put(Material.CLAY_BALL, 4);
 
         recipes.putAll(reversibleRecipes);
         recipes.putAll(irreversibleRecipes);
@@ -74,7 +75,6 @@ public class MaterialMapping {
         irreversibleMaterialMappings.put(Material.GLOWSTONE_DUST, Material.GLOWSTONE);
         irreversibleMaterialMappings.put(Material.NETHER_WART, Material.NETHER_WART_BLOCK);
         irreversibleMaterialMappings.put(Material.NETHER_BRICK, Material.NETHER_BRICKS);
-        irreversibleMaterialMappings.put(Material.CLAY_BALL, Material.CLAY);
         irreversibleMaterialMappings.put(Material.BRICK, Material.BRICKS);
         irreversibleMaterialMappings.put(Material.SNOWBALL, Material.SNOW_BLOCK);
         irreversibleMaterialMappings.put(Material.STRING, Material.WHITE_WOOL);
@@ -82,6 +82,7 @@ public class MaterialMapping {
         irreversibleMaterialMappings.put(Material.PACKED_ICE, Material.BLUE_ICE);
         irreversibleMaterialMappings.put(Material.ICE, Material.PACKED_ICE);
         irreversibleMaterialMappings.put(Material.POPPED_CHORUS_FRUIT, Material.PURPUR_BLOCK);
+        irreversibleMaterialMappings.put(Material.MAGMA_CREAM, Material.MAGMA_BLOCK);
 
         reversibleMaterialMappings.put(Material.COAL, Material.COAL_BLOCK);
         reversibleMaterialMappings.put(Material.RAW_GOLD, Material.RAW_GOLD_BLOCK);
@@ -102,6 +103,7 @@ public class MaterialMapping {
         reversibleMaterialMappings.put(Material.DRIED_KELP, Material.DRIED_KELP_BLOCK);
         reversibleMaterialMappings.put(Material.NETHERITE_INGOT, Material.NETHERITE_BLOCK);
         reversibleMaterialMappings.put(Material.MELON_SLICE, Material.MELON);
+        reversibleMaterialMappings.put(Material.CLAY_BALL, Material.CLAY);
 
         materialMappings.putAll(irreversibleMaterialMappings);
         materialMappings.putAll(reversibleMaterialMappings);
